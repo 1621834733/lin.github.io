@@ -1,0 +1,138 @@
+@import "normalize";
+ //清除浮动
+.clearfix{
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+}
+*{box-sizing: border-box;}
+
+//变量声明1200lg992md768sm小于768xs
+@screen-lg:1200px;
+@screen-md:992px;
+@screen-sm:768px;
+//contaianer容器的宽度
+@container-lg-width:1170px;
+@container-md-width:970px;
+@container-sm-width:750px;
+//列宽
+@grid-gutter-width:30px;
+//总列数
+@grid-columns:12;
+//实现
+//1、容器实现
+.make-container(){
+//  contaniner容器的实现
+.container{
+  .container-common-style();
+  .clearfix();
+  //小屏幕
+  @media(min-width:@screen-sm){
+    width: @container-sm-width;
+  }
+  //中屏幕
+  @media(min-width:@screen-md){
+    width: @container-md-width;
+  }
+  //大屏幕
+  @media(min-width:@screen-lg){
+    width: @container-lg-width;
+  }
+}
+  .container-fluid{
+    .container-common-style();
+    &:extend(.clearfix all);
+  }
+  .container-common-style(){
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: @grid-gutter-width/2;
+    padding-right: @grid-gutter-width/2;
+  }
+}
+.make-container();
+//2、行的设置
+.make-row(){
+  .row{
+    margin-left: -@grid-gutter-width/2;
+    margin-right: -@grid-gutter-width/2;
+  }
+}
+.make-row();
+//列的实现
+//公共样式 1,2,3,4,5,6,7,8,9,10,11,12
+.make-grid-columns(){
+  .col(@index){
+  //  @index
+    @selector:~'.col-xs-@{index},.col-md-@{index},.col-lg-@{index}';
+    .col(@index+1,@selector);
+  }
+  .col(@index,@list)when(@index<=@grid-columns){
+    @selector:~'@{list},.col-xs-@{index},.col-md-@{index},.col-lg-@{index}';
+    .col(@index+1,@selector);
+  }
+  .col(@index,@list)when(@index>@grid-columns){
+    @{list}{
+      padding-left: @grid-gutter-width/2;
+      padding-right: @grid-gutter-width/2;
+      position: relative;
+      min-height: 1px;
+      float:left;
+      margin-top: 1%;
+      margin-bottom:1%;
+    }
+  }
+  .col(1);
+}
+.make-grid-columns();
+//宽度设置  .col-xs-1{wdth}
+.make-column-width(@width){
+  .col(@index) when (@index<=@grid-columns){
+  // 拼接 变量
+    @selector:~'.col-@{width}-@{index}';
+  //  样式控制
+  @{selector}{width:percentage( @index/@grid-columns)};
+    .col(@index+1);
+  }
+  .col(1);
+}
+//.make-column-width(xs);
+//元素偏移
+.make-column-offset(@width){
+  .col(@index) when(@index<=@grid-columns){
+  @selector:~'.col-@{width}-offset-@{index}';
+    @{selector}{ margin-left: percentage(@index/@grid-columns)};
+    .col(@index+1)
+  }
+  .col(1);
+};
+//媒体查询阶段 小屏幕
+@media (min-width: @screen-sm) {
+//  .col-sm-1...12
+//  .col-sm-offset-1...12
+//  宽度设置
+  .make-column-width(sm);
+  .make-column-offset(sm);
+
+}
+//媒体查询阶段 中屏幕
+@media (min-width: @screen-md) {
+  //  .col-sm-1...12
+  //  .col-sm-offset-1...12
+  //  宽度设置
+  .make-column-width(md);
+  .make-column-offset(md);
+
+}
+//媒体查询阶段 大屏幕
+@media (min-width: @screen-lg) {
+  //  .col-sm-1...12
+  //  .col-sm-offset-1...12
+  //  宽度设置
+  .make-column-width(lg);
+  .make-column-offset(lg);
+
+}
